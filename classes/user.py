@@ -16,6 +16,19 @@ class User:
 
     # User constructor
     def __init__(self, name: str, email: str, password: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today()) -> None:
+        '''
+        Constructor for User class
+        Args:
+            name: user name
+            email: user email
+            password: user password
+            create_date: user create date (default: today)
+            update_date: user update date (default: today)
+        Returns:
+            None
+        Notes:
+            This constructor will insert the user to the database
+        '''
         self._name = name
         self._email = email
         self._password = password
@@ -75,14 +88,22 @@ class User:
 
     # Create Project
     def create_project(self, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)):
+        '''
+        Create a new project for the user
+        Args:
+            title: project title
+            description: project description
+            create_date: project create date (default: today)
+            update_date: project update date (default: today)
+            end_date: project end date (default: today + 365 days)
+        Returns:
+            Project object
+        Notes:
+            - This method will insert the project to the database
+            - This method will append the project to the User.projects list
+        '''
         User.projects.append(Project(title=title, description=description, create_date=create_date, update_date=update_date, end_date=end_date))
         return User.projects[-1]
-
-    # Update project
-    def update_project_title(self, project_id, new_title, new_description, new_end_date, update_date = datetime.datetime.today()):
-        # get a project id and modify it in the database using the System class
-        User.system.update_project(project_id, new_title, new_description, new_end_date, update_date)
-        
 
 
 

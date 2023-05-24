@@ -11,6 +11,20 @@ class Project:
     cursor = conn.cursor()
 
     def __init__(self, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)) -> None:
+        '''
+        Constructor for Project class
+        Args:
+            title: project title
+            description: project description
+            create_date: project create date (default: today)
+            update_date: project update date (default: today)
+            end_date: project end date (default: today + 365 days)
+        Returns:
+            None
+        Notes:
+            - This constructor will insert the project to the database.
+            - Only User class can create a project.
+        '''
         self._title = title
         self._description = description
         self._end_date = end_date
@@ -26,7 +40,7 @@ class Project:
         Project.system.insert_project(id, title, description, create_date, update_date, end_date)
         self._id = id
 
-    # Get methods for id, name, email and password
+    # Get methods for name, email and password
     @property
     def id(self):
         return self._id
@@ -44,6 +58,7 @@ class Project:
         return self._end_date
     
     # Set methods for name, email and password
+    # Each set method updates the database as well
     @title.setter
     def title(self, new_title):
         if isinstance(new_title, str):
