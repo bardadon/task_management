@@ -29,17 +29,3 @@ def test_insert_user():
     results = cursor.fetchall()
 
     assert results[0][1] == 'test2'
-
-
-def test_insert_project():
-    
-    # Creating a new user
-    test_project = Project(title='test2', description='test2')
-
-    # Check if System automatically inserted user
-    query = "SELECT * FROM projects WHERE title = 'test2'"
-
-    cursor.execute(query)
-    results = cursor.fetchall()
-
-    assert results[0][1] == 'test2'

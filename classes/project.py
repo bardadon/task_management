@@ -5,12 +5,10 @@ from classes.system import System
 
 class Project:
 
-    # insert user to database
+    # Create a system instance
     system = System(host = '192.168.1.193', user='postgres', password=1365, port=5432, database='task_management')
-    conn = system.connect_to_db()
-    cursor = conn.cursor()
 
-    def __init__(self, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)) -> None:
+    def __init__(self, user_id, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)) -> None:
         '''
         Constructor for Project class
         Args:
@@ -30,14 +28,14 @@ class Project:
         self._end_date = end_date
         self.create_date = create_date
         self.update_date = update_date
+        self.user_id = user_id
 
         # Grab the last id from the database and add 1 to it
-        Project.cursor.execute("SELECT MAX(project_id) FROM projects")
-        last_id = Project.cursor.fetchone()[0]
+        last_id = Project.system.grab_max_object_id(object='project')
         id = last_id + 1
         
         # Insert project to db
-        Project.system.insert_project(id, title, description, create_date, update_date, end_date)
+        Project.system.insert_project(id, user_id, title, description, create_date, update_date, end_date)
         self._id = id
 
     # Get methods for name, email and password
@@ -83,10 +81,13 @@ class Project:
         else:
             raise TypeError("End date must be a date!")
         
+    def __str__(self) -> str:
+        return f'Project: {self.title}\nDescription: {self.description}\nEnd date: {self.end_date}\nCreate date: {self.create_date}\nUpdate date: {self.update_date}\n'
+        
     
     
 
 if __name__ == '__main__':
-    project = Project('Project 1', 'This is a project')
-    print(project.id)
+    project = Project(1, 'Project 1', 'This is a project')
+    print(project)
 

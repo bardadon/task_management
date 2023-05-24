@@ -9,7 +9,7 @@ from classes.system import System
 
 
 test_user = User(name='test', email='test@test.com', password='test')
-test_project = Project(title='test@test.com', description='test', end_date=datetime.datetime(2023,1,1))
+test_project = Project(user_id = test_user.id, title='test@test.com', description='test', end_date=datetime.datetime(2023,1,1))
 test_system = System()
 conn = test_system.connect_to_db()
 cursor = conn.cursor()
@@ -69,9 +69,7 @@ def test_changingattributes_changesupdatetime():
 # Test: create project method
 def test_create_project():
     # Creating a project using a User, and collecting its attributes
-    test_project = test_user.create_project(title='test_project', description='test')
-
-    print(test_project.id)
+    test_project = test_user.create_project(user_id = test_user.id, title='test_project', description='test')
 
     # Verifying the attributes of the project from the database
     query = "SELECT * FROM projects WHERE project_id = %s"
@@ -79,10 +77,10 @@ def test_create_project():
     results = cursor.fetchall()
 
     # Collecting the attributes of the project from the database
-    project_attributes = (results[0][1], results[0][2])
+    project_attributes = (results[0][1], results[0][2], results[0][3])
 
     # Expected attributes of the project
-    expected_project_attributes = (test_project.title, test_project.description)
+    expected_project_attributes = (test_project.user_id, test_project.title, test_project.description)  
 
     # Verifying the attributes of the project from the database
     assert project_attributes == expected_project_attributes
@@ -91,7 +89,7 @@ def test_create_project():
 # Test: can update project attributes
 def test_update_project():
     # Creating a project using a User, and collecting its attributes
-    test_project = test_user.create_project(title='test_project', description='test')
+    test_project = test_user.create_project(user_id = test_user.id, title='test_project', description='test')
 
     # Updating the project attributes
     test_project.title = 'updated_project'
@@ -103,17 +101,59 @@ def test_update_project():
     results = cursor.fetchall()
 
     # Collecting the attributes of the project from the database
-    project_attributes = (results[0][1], results[0][2])
+    project_attributes = (results[0][1], results[0][2], results[0][3])
 
     # Expected attributes of the project
-    expected_project_attributes = (test_project.title, test_project.description)
+    expected_project_attributes = (test_project.user_id, test_project.title, test_project.description)  
 
     # Verifying the attributes of the project from the database
     assert project_attributes == expected_project_attributes
 
+# Test: deleting a project, deletes from both db and User.project list
+def test_deleteproject_deletedfromUserprojectlist():
+    # Creating a user and a project, and counting the number of projects
+    test_user3 = User(name='test3', email='test3', password='test3')
+    test_user3.create_project(user_id = test_user3.id, title='test_project3', description='test_project3')
+    test_user3.create_project(user_id = test_user3.id, title='test_project4', description='test_project4')
+    test_number_of_projects = len(test_user3.projects)
+
+    # Deleting project from User.project list
+    test_user3.delete_project(project_title='test_project3')
+
+    # Expected number of projects
+    expected_number_of_projects = len(test_user3.projects) + 1
+
+    # Verify that project is deleted from list
+    assert test_number_of_projects == expected_number_of_projects
+
+def test_deleteproject_deletedfromdb():
+    # Creating a user and a project, and counting the number of projects
+    test_user3 = User(name='test3', email='test3', password='test3')
+    test_user3.create_project(user_id = test_user3.id, title='test_project3', description='test_project3')
+    test_user3.create_project(user_id = test_user3.id, title='test_project4', description='test_project4')
+    
+    print(test_user3.id)
+
+    # Grab num of projects from db
+    query = "select count(*) from projects where user_id = %s"
+    cursor.execute(query, (test_user3.id,))
+    test_number_of_projects = cursor.fetchall()[0][0]
+
+    # Deleting project 
+    test_user3.delete_project(project_title='test_project3')
+
+    # Grab number of projects from db
+    query = "select count(*) from projects where user_id = %s"
+    cursor.execute(query, (test_user3.id,))
+    expected_test_number_of_projects = cursor.fetchall()[0][0] + 1
+
+    # Verify that project is deleted from list
+    assert test_number_of_projects == expected_test_number_of_projects 
+    
+    
 
 
-# Test: after updating project, update_date is automatically updated
+
 
 if __name__ == '__main__':
-    test_modifyattributes_changeoccuredindb()
+    test_deleteproject_deletedfromdb()

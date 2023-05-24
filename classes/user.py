@@ -11,9 +11,6 @@ class User:
     # insert user to database
     system = System(host = '192.168.1.193', user='postgres', password=1365, port=5432, database='task_management')
 
-    # User projects
-    projects = []
-
     # User constructor
     def __init__(self, name: str, email: str, password: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today()) -> None:
         '''
@@ -36,11 +33,15 @@ class User:
         self.update_date = update_date
 
         # Grab the last id from the database and add 1 to it
-        id = User.system.grab_max_user_id() + 1
+        id = User.system.grab_max_object_id(object='user') + 1
         
         # Insert user to db
         User.system.insert_user(id, name, email, password, create_date, update_date) 
-        self._id = id       
+        self._id = id   
+
+        # Create an empty list for projects
+        self.projects = []
+
 
     # Get methods for id, name, email and password
     @property
@@ -87,7 +88,7 @@ class User:
         
 
     # Create Project
-    def create_project(self, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)):
+    def create_project(self, user_id, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)):
         '''
         Create a new project for the user
         Args:
@@ -97,13 +98,35 @@ class User:
             update_date: project update date (default: today)
             end_date: project end date (default: today + 365 days)
         Returns:
-            Project object
+            project_id
         Notes:
             - This method will insert the project to the database
             - This method will append the project to the User.projects list
         '''
-        User.projects.append(Project(title=title, description=description, create_date=create_date, update_date=update_date, end_date=end_date))
-        return User.projects[-1]
+        self.projects.append(Project(user_id = self.id, title=title, description=description, create_date=create_date, update_date=update_date, end_date=end_date))
+        return self.projects[-1]
+    
+    # delete project
+    def delete_project(self, project_title):
+        '''
+        Delete a project from the user
+        Args:
+            project_title: project title
+        Returns:
+            None
+        Notes:
+            - This method will delete the project from the database
+            - This method will delete the project from the User.projects list
+        '''
+        for project in self.projects:
+            if project.title == project_title:
+                self.projects.remove(project)
+                User.system.delete_project(project.id)
+                break
+
+    
+    
+        
 
 
 
