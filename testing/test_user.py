@@ -69,7 +69,7 @@ def test_changingattributes_changesupdatetime():
 # Test: create project method
 def test_create_project():
     # Creating a project using a User, and collecting its attributes
-    test_project = test_user.create_project(user_id = test_user.id, title='test_project', description='test')
+    test_project = test_user.create_project(title='test_project', description='test')
 
     # Verifying the attributes of the project from the database
     query = "SELECT * FROM projects WHERE project_id = %s"
@@ -77,10 +77,10 @@ def test_create_project():
     results = cursor.fetchall()
 
     # Collecting the attributes of the project from the database
-    project_attributes = (results[0][1], results[0][2], results[0][3])
+    project_attributes = (results[0][2], results[0][3])
 
     # Expected attributes of the project
-    expected_project_attributes = (test_project.user_id, test_project.title, test_project.description)  
+    expected_project_attributes = (test_project.title, test_project.description)  
 
     # Verifying the attributes of the project from the database
     assert project_attributes == expected_project_attributes
@@ -89,7 +89,7 @@ def test_create_project():
 # Test: can update project attributes
 def test_update_project():
     # Creating a project using a User, and collecting its attributes
-    test_project = test_user.create_project(user_id = test_user.id, title='test_project', description='test')
+    test_project = test_user.create_project(title='test_project', description='test')
 
     # Updating the project attributes
     test_project.title = 'updated_project'
@@ -101,10 +101,10 @@ def test_update_project():
     results = cursor.fetchall()
 
     # Collecting the attributes of the project from the database
-    project_attributes = (results[0][1], results[0][2], results[0][3])
+    project_attributes = (results[0][2], results[0][3])
 
     # Expected attributes of the project
-    expected_project_attributes = (test_project.user_id, test_project.title, test_project.description)  
+    expected_project_attributes = (test_project.title, test_project.description)  
 
     # Verifying the attributes of the project from the database
     assert project_attributes == expected_project_attributes
@@ -113,8 +113,8 @@ def test_update_project():
 def test_deleteproject_deletedfromUserprojectlist():
     # Creating a user and a project, and counting the number of projects
     test_user3 = User(name='test3', email='test3', password='test3')
-    test_user3.create_project(user_id = test_user3.id, title='test_project3', description='test_project3')
-    test_user3.create_project(user_id = test_user3.id, title='test_project4', description='test_project4')
+    test_user3.create_project(title='test_project3', description='test_project3')
+    test_user3.create_project(title='test_project4', description='test_project4')
     test_number_of_projects = len(test_user3.projects)
 
     # Deleting project from User.project list
@@ -129,11 +129,9 @@ def test_deleteproject_deletedfromUserprojectlist():
 def test_deleteproject_deletedfromdb():
     # Creating a user and a project, and counting the number of projects
     test_user3 = User(name='test3', email='test3', password='test3')
-    test_user3.create_project(user_id = test_user3.id, title='test_project3', description='test_project3')
-    test_user3.create_project(user_id = test_user3.id, title='test_project4', description='test_project4')
+    test_user3.create_project(title='test_project3', description='test_project3')
+    test_user3.create_project(title='test_project4', description='test_project4')
     
-    print(test_user3.id)
-
     # Grab num of projects from db
     query = "select count(*) from projects where user_id = %s"
     cursor.execute(query, (test_user3.id,))

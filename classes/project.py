@@ -2,6 +2,7 @@ import datetime
 import sys
 sys.path.append('/projects/task_management')
 from classes.system import System
+from classes.task import Task
 
 class Project:
 
@@ -37,6 +38,9 @@ class Project:
         # Insert project to db
         Project.system.insert_project(id, user_id, title, description, create_date, update_date, end_date)
         self._id = id
+
+        # Create an empty list for projects
+        self.tasks = []
 
     # Get methods for name, email and password
     @property
@@ -80,6 +84,25 @@ class Project:
             self._end_date = new_end_date
         else:
             raise TypeError("End date must be a date!")
+        
+    # create task    
+    def create_task(self, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)):
+        '''
+        Create a task for the project
+        Args:
+            title: task title
+            description: task description
+            create_date: task create date (default: today)
+            update_date: task update date (default: today)
+            end_date: task end date (default: today + 365 days)
+        Returns:
+            Task object
+        Notes:
+            - This method will insert the task to the database.
+            - Only Project class can create a task.
+        '''
+        self.tasks.append(Task(self.id, title, description, create_date, update_date, end_date))
+        return self.tasks[-1]
         
     def __str__(self) -> str:
         return f'Project: {self.title}\nDescription: {self.description}\nEnd date: {self.end_date}\nCreate date: {self.create_date}\nUpdate date: {self.update_date}\n'

@@ -3,8 +3,7 @@ import sys
 import datetime
 sys.path.append('/projects/task_management')
 from classes.system import System
-from classes.project import Project
-from classes.user import User
+
 
 
 class Task:
@@ -116,13 +115,7 @@ class Task:
         else:
             raise TypeError("Last update date must be a datetime!")
         
-    
-
 
 
 if __name__ == '__main__':
-    test_user = User(name='test', email='test@test.com', password='test')
-    test_project = Project(user_id = test_user.id, title='test@test.com', description='test', end_date=datetime.datetime(2023,1,1))
-    test_task = Task(project_id=test_project.id, title='test', description='test')
-
-    #print(test_task.title)
+    pass

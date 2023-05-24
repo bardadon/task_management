@@ -7,7 +7,8 @@ from classes.user import User
 from classes.project import Project
 
 test_user = User(name='test', email='test@test.com', password='test')
-test_project = Project(user_id = test_user.id, title='test@test.com', description='test', end_date=datetime.datetime(2023,1,1))
+test_user.create_project(title='test', description='test', end_date=datetime.datetime(2023,1,1))
+test_project = test_user.projects[0]
 test_task = Task(project_id=test_project.id, title='test', description='test')
 test_system = System()
 conn = test_system.connect_to_db()

@@ -88,7 +88,7 @@ class User:
         
 
     # Create Project
-    def create_project(self, user_id, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)):
+    def create_project(self, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)):
         '''
         Create a new project for the user
         Args:
