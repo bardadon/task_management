@@ -10,4 +10,4 @@ You can check out my Medium article for more details:
 
 - #1 - Gathering Requirements and Designing The Application - https://medium.com/@bdadon50/implementing-a-task-management-application-part-1-335aef303fc3
 
-- #2 - Implementing the Back-end - 
+- #2 - Implementing the Back-end - https://medium.com/@bdadon50/implementing-a-task-management-application-part-2-5255ef82d3e0
