@@ -55,6 +55,10 @@ class System:
             cursor.execute("SELECT MAX(project_id) FROM projects")
         if object == 'task':
             cursor.execute("SELECT MAX(task_id) FROM tasks")
+        if object == 'comment':
+            cursor.execute("SELECT MAX(comment_id) FROM comments")
+        if object == 'notification':
+            cursor.execute("SELECT MAX(notification_id) FROM notifications")
 
         max_id = cursor.fetchone()[0]
         return max_id
@@ -221,7 +225,7 @@ class System:
         conn = self.connect_to_db()
         cursor = conn.cursor()
         query = "update tasks set project_id = %s, task_id = %s, title = %s, description = %s, status = %s, due_date = %s, start_date = %s, last_update_date = %s where task_id = %s"
-        cursor.execute(query,(project_id, task_id, title, description, status, due_date, start_date, last_update_date, task_id))
+        cursor.execute(query,(project_id, task_id, title, description, status, due_date, start_date, datetime.datetime.today(), task_id))
         conn.commit()
         cursor.close()
         conn.close
@@ -241,6 +245,97 @@ class System:
         conn.commit()
         cur.close()
         conn.close()
+
+    ## Comment Related Methods ##
+    def insert_comment(self, comment_id, task_id, content, created_date, last_update_date):
+        '''
+        Insert comment to database to comments table
+        Args:
+            comment_id: comment id
+            task_id: task id
+            content: comment content
+            created_date: comment created date
+            last_update_date: comment last update date
+        
+        Returns:
+            None
+        '''
+        conn = self.connect_to_db()
+        cursor = conn.cursor()
+        query = '''
+        insert into comments(comment_id, task_id, content, created_date, last_update_date) 
+        values
+        (%s, %s,%s,%s,%s)
+        '''
+        cursor.execute(query,(comment_id, task_id, content, datetime.datetime.today(), datetime.datetime.today()))
+        conn.commit()
+        cursor.close()
+        conn.close
+
+    def update_comment_attributes(self, comment_id, task_id, content, created_date, last_update_date):
+        '''
+        Update comment attributes
+        Args:
+            comment_id: comment id
+            task_id: task id
+            content: comment content
+            created_date: comment created date
+            last_update_date: comment last update date
+        Returns:
+            None
+        '''
+        conn = self.connect_to_db()
+        cursor = conn.cursor()
+        query = "update comments set comment_id = %s, task_id = %s, content = %s, created_date = %s, last_update_date = %s where comment_id = %s"
+        cursor.execute(query,(comment_id, task_id, content, created_date, datetime.datetime.today(), comment_id))
+        conn.commit()
+        cursor.close()
+        conn.close
+
+    def delete_comment(self, comment_id):
+        conn = self.connect_to_db()
+        cursor = conn.cursor()
+        query = '''
+        delete from comments where comment_id = %s
+        '''
+        cursor.execute(query,(comment_id,))
+        conn.commit()
+        cursor.close()
+        conn.close
+
+    ## Notification Related Methods ##
+    def insert_notification(self, notification_id, task_id, content, created_date, notify_date, last_update_date):
+        conn = self.connect_to_db()
+        cursor = conn.cursor()
+        query = '''
+        insert into notifications(notification_id, task_id, content, created_date, notify_date, last_update_date) 
+        values
+        (%s, %s,%s,%s,%s,%s)
+        '''
+        cursor.execute(query,(notification_id, task_id, content, datetime.datetime.today(), datetime.datetime.today() + datetime.timedelta(days = 30), datetime.datetime.today()))
+        conn.commit()
+        cursor.close()
+        conn.close
+
+    def update_notification_attributes(self, notification_id, task_id, content, created_date, notify_date, last_update_date):
+        conn = self.connect_to_db()
+        cursor = conn.cursor()
+        query = "update notifications set notification_id = %s, task_id = %s, content = %s, created_date = %s, notify_date = %s, last_update_date = %s where notification_id = %s"
+        cursor.execute(query,(notification_id, task_id, content, created_date, notify_date, datetime.datetime.today(), notification_id))
+        conn.commit()
+        cursor.close()
+        conn.close
+
+    def delete_notification(self, notification_id):
+        conn = self.connect_to_db()
+        cursor = conn.cursor()
+        query = '''
+        delete from notifications where notification_id = %s
+        '''
+        cursor.execute(query,(notification_id,))
+        conn.commit()
+        cursor.close()
+        conn.close
 
 
 

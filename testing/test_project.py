@@ -18,7 +18,7 @@ cursor = conn.cursor()
 
 # Test: project creation
 def test_project_creation():
-    test_project = Project(user_id = 1, title='test@test.com', description='test', end_date=datetime.datetime(2023,1,1))
+    test_project = test_user.create_project(title='test', description='test', end_date=datetime.datetime(2023,1,1))
     assert type(test_project) == Project
 
 # Test: get methods
@@ -62,3 +62,38 @@ def test_create_task_appendedtodatabase():
     results = cursor.fetchall()
 
     assert len(results) == 1
+
+# Test: deleting a project, deletes from both db and User.project list
+def test_deletetask_deletedfromProjectTasklist():
+    test_task1 = test_project.create_task(title='test5', description = 'test5')
+    test_task2 = test_project.create_task(title='test6', description = 'test6')
+    test_number_of_tasks = len(test_project.tasks)
+
+    # Deleting project from User.project list
+    test_project.delete_task(task_id=test_task1.task_id)
+
+    # Expected number of projects
+    expected_number_of_tasks = len(test_project.tasks) + 1
+
+    # Verify that project is deleted from list
+    assert test_number_of_tasks == expected_number_of_tasks
+
+def test_deletetask_deletedfromdb():
+    test_task1 = test_project.create_task(title='test5', description = 'test5')
+    test_task2 = test_project.create_task(title='test6', description = 'test6')
+    
+    # Grab num of projects from db
+    query = "select count(*) from tasks where project_id = %s"
+    cursor.execute(query, (test_project.id,))
+    test_number_of_tasks = cursor.fetchall()[0][0]
+
+    # Deleting project 
+    test_project.delete_task(task_id = test_task1.task_id)
+
+    # Grab number of projects from db
+    query = "select count(*) from tasks where project_id = %s"
+    cursor.execute(query, (test_project.id,))
+    expected_number_of_tasks = cursor.fetchall()[0][0] + 1
+
+    # Verify that project is deleted from list
+    assert test_number_of_tasks == expected_number_of_tasks 

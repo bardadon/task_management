@@ -7,12 +7,13 @@ from classes.project import Project
 from classes.user import User
 from classes.system import System
 
-
-test_user = User(name='test', email='test@test.com', password='test')
-test_project = Project(user_id = test_user.id, title='test@test.com', description='test', end_date=datetime.datetime(2023,1,1))
 test_system = System()
 conn = test_system.connect_to_db()
 cursor = conn.cursor()
+
+test_user = User(name='test', email='test@test.com', password='test')
+test_project = test_user.create_project(title = 'test', description='test')
+
 
 # Test: user creation
 def test_user_creation():
@@ -109,8 +110,9 @@ def test_update_project():
     # Verifying the attributes of the project from the database
     assert project_attributes == expected_project_attributes
 
+
 # Test: deleting a project, deletes from both db and User.project list
-def test_deleteproject_deletedfromUserprojectlist():
+def test_deletecomment_deletedfromUserprojectlist():
     # Creating a user and a project, and counting the number of projects
     test_user3 = User(name='test3', email='test3', password='test3')
     test_user3.create_project(title='test_project3', description='test_project3')
@@ -126,7 +128,7 @@ def test_deleteproject_deletedfromUserprojectlist():
     # Verify that project is deleted from list
     assert test_number_of_projects == expected_number_of_projects
 
-def test_deleteproject_deletedfromdb():
+def test_deletecomment_deletedfromdb():
     # Creating a user and a project, and counting the number of projects
     test_user3 = User(name='test3', email='test3', password='test3')
     test_user3.create_project(title='test_project3', description='test_project3')

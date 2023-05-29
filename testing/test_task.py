@@ -27,7 +27,7 @@ def test_createtask_defaultstatusisactive():
 # Test: task inserted to db. 
 # Test: Check if new task is insered to db with max id + 1
 def test_createtask_insertedtodb():
-    test_task = Task(project_id=test_project.id, title='task_title_test123', description='test')
+    test_task = test_project.create_task(title='task_title_test123', description='test')
 
     # Verify in db
     task_id = test_system.grab_max_object_id(object='task')
@@ -58,5 +58,39 @@ def test_updatingtitle_updatedindb():
 
     assert test_title == expected_title
 
+# Test: deleting a project, deletes from both db and User.project list
+def test_deleteproject_deletedfromTaskCommentlist():
+    test_comment1 = test_task.create_comment(content='test5')
+    test_comment2 = test_task.create_comment(content='test6')
+    test_number_of_comments = len(test_task.comments)
+
+    # Deleting project from User.project list
+    test_task.delete_comment(comment_id=test_comment1.comment_id)
+
+    # Expected number of projects
+    test_number_of_comments = len(test_task.comments) + 1
+
+    # Verify that project is deleted from list
+    assert test_number_of_comments == test_number_of_comments
+
+def test_deleteproject_deletedfromdb():
+    test_comment1 = test_task.create_comment(content='test5')
+    test_comment2 = test_task.create_comment(content='test6')
+    
+    # Grab num of projects from db
+    query = "select count(*) from comments where task_id = %s"
+    cursor.execute(query, (test_task.task_id,))
+    test_number_of_comments = cursor.fetchall()[0][0]
+
+    # Deleting project 
+    test_task.delete_comment(comment_id = test_comment1.comment_id)
+
+    # Grab number of projects from db
+    query = "select count(*) from comments where task_id = %s"
+    cursor.execute(query, (test_task.task_id,))
+    expected_number_of_comments = cursor.fetchall()[0][0] + 1
+
+    # Verify that project is deleted from list
+    assert test_number_of_comments == expected_number_of_comments 
 
 

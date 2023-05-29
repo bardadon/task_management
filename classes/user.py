@@ -9,7 +9,7 @@ from classes.system import System
 class User:
 
     # insert user to database
-    system = System(host = '192.168.1.193', user='postgres', password=1365, port=5432, database='task_management')
+    system = System()
 
     # User constructor
     def __init__(self, name: str, email: str, password: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today()) -> None:

@@ -3,7 +3,8 @@ import sys
 import datetime
 sys.path.append('/projects/task_management')
 from classes.system import System
-
+from classes.comment import Comment
+from classes.notification import Notification
 
 
 class Task:
@@ -31,8 +32,13 @@ class Task:
         Task.system.insert_task(task_id, project_id, title, description, self.status, due_date, start_date, last_update_date)
         self._task_id = task_id   
 
-        # Create an empty list for projects
-        self.projects = []
+        # Create an empty list for comments
+        self.comments = []
+
+        # Create an empty list for notifications
+        self.notifications = []
+
+
 
     # get methods for Task
     @property
@@ -115,7 +121,48 @@ class Task:
         else:
             raise TypeError("Last update date must be a datetime!")
         
+    def create_comment(self, content):
+        '''
+        Create a task for the project
+        Args:
+            title: task title
+            description: task description
+            create_date: task create date (default: today)
+            update_date: task update date (default: today)
+            end_date: task end date (default: today + 365 days)
+        Returns:
+            Task object
+        Notes:
+            - This method will insert the task to the database.
+            - Only Project class can create a task.
+        '''
+        self.comments.append(Comment(self.task_id, content, datetime.datetime.today(), datetime.datetime.today()))
+        return self.comments[-1]
+    
+    # delete comment
+    def delete_comment(self, comment_id):
+        '''
+        Delete a project from the user
+        Args:
+            project_title: project title
+        Returns:
+            None
+        Notes:
+            - This method will delete the project from the database
+            - This method will delete the project from the User.projects list
+        '''
+        for comment in self.comments:
+            if comment.comment_id == comment_id:
+                self.comments.remove(comment)
+                Task.system.delete_comment(comment_id)
+                break
+
+    def create_notification(self, notification_content):
+        self.notifications.append(Notification(self.task_id, notification_content))
+        return self.notifications[-1]
 
 
 if __name__ == '__main__':
+    #test_task = Task(project_id=1, title='test', description='test')
+    #test_comment = test_task.create_comment(content='hello')
     pass

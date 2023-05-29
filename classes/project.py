@@ -7,7 +7,7 @@ from classes.task import Task
 class Project:
 
     # Create a system instance
-    system = System(host = '192.168.1.193', user='postgres', password=1365, port=5432, database='task_management')
+    system = System()
 
     def __init__(self, user_id, title: str, description: str, create_date = datetime.datetime.today(), update_date = datetime.datetime.today(), end_date = datetime.datetime.today() + datetime.timedelta(days=365)) -> None:
         '''
@@ -103,7 +103,16 @@ class Project:
         '''
         self.tasks.append(Task(self.id, title, description, create_date, update_date, end_date))
         return self.tasks[-1]
+    
+    # delete task
+    def delete_task(self, task_id):
+        for task in self.tasks:
+            if task.task_id == task_id:
+                self.tasks.remove(task)
+                Project.system.delete_task(task.task_id)
+                break
         
+
     def __str__(self) -> str:
         return f'Project: {self.title}\nDescription: {self.description}\nEnd date: {self.end_date}\nCreate date: {self.create_date}\nUpdate date: {self.update_date}\n'
         
