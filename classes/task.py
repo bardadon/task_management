@@ -10,7 +10,7 @@ from classes.notification import Notification
 class Task:
 
     # Create a system instance
-    system = System(host = '192.168.1.193', user='postgres', password=1365, port=5432, database='task_management')
+    system = System()
 
     # General task status
     task_status = ['active', 'inactive', 'pending']
