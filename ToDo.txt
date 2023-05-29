@@ -1,9 +1,0 @@
-1. add foregin key attributes to the existing classes and tables.
-add project_id to users class and table
-add task_id to projects class and table
-
-2. Create Task class
-it should have project_id and notification id in the class and table
-
-3. Create comment class
-it should have notification id in the class and table
